@@ -20,8 +20,8 @@ import os
 warnings.filterwarnings("ignore")
 # Parameters
 img_w, img_h=1200, 1200 # Image width and height
-max_iter=100 # Maximum iterations
-escape_r=20.0 # Escape radius
+max_iter=200 # Maximum iterations
+escape_r=4.0 # Escape radius
 bounds=(-2.5, 2.5, -2.5, 2.5) # (xmin, xmax, ymin, ymax)
 # Creating an output directory
 os.makedirs("./outputs", exist_ok=True)
@@ -35,8 +35,8 @@ palette=LinearSegmentedColormap.from_list("", [
 x0, x1, y0, y1=bounds
 # Each point c in the complex plane sets w = c and b = c * 0.3j
 c=(np.linspace(x0, x1, img_w)[np.newaxis,:] + 1j*np.linspace(y0, y1, img_h)[:,np.newaxis])
-w, b=c, c * 0.3j #weights and biases 
-z=np.full_like(c, 0.3+0.0j) #input 
+w, b=c, c * 0.3j # weights and biases
+z=np.full_like(c, 0.3+0.0j) # input
 # Initialize arrays for escape time, smooth coloring, orbit trap, final angle, and escape mask
 smooth=np.zeros((img_h, img_w), dtype=float)
 trap_min=np.full((img_h, img_w), np.inf)
@@ -46,14 +46,16 @@ escaped=np.zeros((img_h, img_w), dtype=bool)
 for i in range(max_iter):
     mask=~escaped
     if not np.any(mask): break
-    z[mask]=np.tanh(w[mask]*z[mask] + b[mask])
-    z=np.where(np.isfinite(z), z, 0+0j)
+    z_new=np.tanh(w[mask]*z[mask] + b[mask])
+    z[mask]=np.where(np.isfinite(z_new), z_new, 0+0j)
     absz=np.abs(z)
-    trap_min=np.where(mask & (np.abs(absz-1.0) < trap_min), np.abs(absz-1.0), trap_min)
-    new=mask & (absz > escape_r)
+    # Orbit trap: tracking minimum distance to unit circle, only for still-active points
+    active=mask & ~escaped
+    trap_min=np.where(active & (np.abs(absz-1.0) < trap_min), np.abs(absz-1.0), trap_min)
+    new=active & (absz > escape_r)
     if np.any(new):
         lz=np.log(np.maximum(absz[new], 1e-10))
-        smooth[new]=np.clip(i+1-np.log(lz/np.log(escape_r))/np.log(2), 0, max_iter)
+        smooth[new]=np.clip(i+1-(lz-np.log(escape_r))/np.log(escape_r), 0, max_iter)
         ang_fin[new]=np.angle(z[new])
         escaped[new]=True
 # Mapping escape time, angle, and orbit trap to color
@@ -71,9 +73,7 @@ img*=vig
 fig, ax=plt.subplots(figsize=(10, 10), facecolor="#000000")
 ax.imshow(img, cmap=palette, origin="lower", interpolation="lanczos",
           vmin=0, vmax=1, extent=[x0, x1, y0, y1])
-ax.set_title("Forward Pass Dynamics: z -> tanh(w*z + b)",
-             color="white", fontsize=13, fontweight="bold",
-             fontfamily="monospace", pad=14)
+ax.set_title("Forward Pass Dynamics: z -> tanh(w*z + b)",color="white", fontsize=13, fontweight="bold",fontfamily="monospace", pad=14)
 ax.set_xlabel("Re(w)", color="#666688", fontsize=9, fontfamily="monospace")
 ax.set_ylabel("Im(w)", color="#666688", fontsize=9, fontfamily="monospace")
 ax.tick_params(colors="#444466", labelsize=7)
