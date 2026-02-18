@@ -1,7 +1,7 @@
 """
 Fractal 1: Neural Forward Pass Dynamics
 
-For each point in the complex plane, c encodes a (weight, bias) pair.
+For each point in the complex plane, c defines the weight w = c, with bias coupled as b = c * 0.3j
 
 We iterate the neural layer z -> tanh(w*z + b) starting from z = 0.3 and track two things:
 1. Escape speed: how fast z grows beyond a threshold (diverges)
@@ -33,6 +33,7 @@ palette=LinearSegmentedColormap.from_list("", [
 ], N=4096)
 # Creating the grid
 x0, x1, y0, y1=bounds
+# Each point c in the complex plane sets w = c and b = c * 0.3j
 c=(np.linspace(x0, x1, img_w)[np.newaxis,:] + 1j*np.linspace(y0, y1, img_h)[:,np.newaxis])
 w, b=c, c * 0.3j #weights and biases 
 z=np.full_like(c, 0.3+0.0j) #input 
@@ -74,7 +75,7 @@ ax.set_title("Forward Pass Dynamics: z → tanh(w*z + b)",
              color="white", fontsize=13, fontweight="bold",
              fontfamily="monospace", pad=14)
 ax.set_xlabel("Re(w)", color="#666688", fontsize=9, fontfamily="monospace")
-ax.set_ylabel("Im(b)", color="#666688", fontsize=9, fontfamily="monospace")
+ax.set_ylabel("Im(w)", color="#666688", fontsize=9, fontfamily="monospace")
 ax.tick_params(colors="#444466", labelsize=7)
 for s in ax.spines.values(): s.set_edgecolor("#222233")
 fig.tight_layout()
