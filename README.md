@@ -1,4 +1,4 @@
-# 🌀 deepfractal
+# 🌀 deepfractals
 
 Deep learning math iterated across the complex plane. The fractal geometry that emerges reflects how networks actually behave; where they converge, where they explode, and what sits at the edge between the two.
 
@@ -31,7 +31,7 @@ For each starting weight `w0` in the complex plane, gradient descent runs until 
 
 
 ### 3. Backpropagation Error Flow
-**`backpropogation_error_flow.py`**
+**`backpropagation_error_flow.py`**
 
 Iterates the backward pass `delta -> tanh'(w * delta) * delta + c` as a complex map, where `delta` is the error signal flowing backward and `tanh'(z) = 1 - tanh^2(z)` is the local gradient that scales it at each layer.
 For each point in the complex plane, `w` encodes the weight and `c` encodes the input. Color encodes whether the error signal escapes to infinity, vanishes to zero, or orbits near the unit circle, the same three regimes that determine whether a deep network trains, dies, or explodes.
