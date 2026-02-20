@@ -40,5 +40,5 @@ For each point in the complex plane, `w` encodes the weight and `c` encodes the 
   <img src="outputs/backprop.png" width="600"/>
 </p>
 
-## Reading the geometry
+### Reading the geometry
 Each fractal is a geometric consequence of the same math that governs how neural networks learn. The forward pass, the gradient descent basins, the backpropagation error flow; iterated in the complex plane, they produce structure that maps directly to training behavior. Where the geometry is smooth, training is stable. Where it shatters, it is sensitive. The boundary between the two is where the interesting math lives.
