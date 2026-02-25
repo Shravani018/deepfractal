@@ -1,5 +1,10 @@
 # 🌀 deepfractals
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Theme-Fractal_Geometry-purple" />
+  <img src="https://img.shields.io/badge/Focus-Deep_Learning_Math-navy" />
+</p>
+
 Deep learning math iterated across the complex plane. The fractal geometry that emerges reflects how networks actually behave; where they converge, where they explode, and what sits at the edge between the two.
 
 ---
